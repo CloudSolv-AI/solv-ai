@@ -20,7 +20,7 @@
 
 To install Solv AI, use pip:
 ```bash
-pip install solv_ai
+pip install solv-ai
 ```
 
 ## Usage
