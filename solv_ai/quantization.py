@@ -1,7 +1,7 @@
 import numpy as np
 
 class QuantizedLayer:
-    def __init__(self, weights, bits=8, scheme='symmetric'):
+    def __init__(self, weights, bits=8, scheme='symmetric', per_channel=False):
         if not isinstance(weights, np.ndarray):
             raise TypeError("Weights must be a numpy array")
         if bits not in [8, 16, 32]:
@@ -11,18 +11,25 @@ class QuantizedLayer:
         self.weights = weights
         self.bits = bits
         self.scheme = scheme
+        self.per_channel = per_channel
         self.scale, self.zero_point = self.calculate_quantization_params()
 
     def calculate_quantization_params(self):
-        min_val = np.min(self.weights)
-        max_val = np.max(self.weights)
-        if min_val == max_val:
+        if self.per_channel:
+            min_val = np.min(self.weights, axis=1, keepdims=True)
+            max_val = np.max(self.weights, axis=1, keepdims=True)
+        else:
+            min_val = np.min(self.weights)
+            max_val = np.max(self.weights)
+        
+        if np.any(min_val == max_val):
             raise ValueError("Min and max values of weights are the same, cannot quantize")
+        
         qmin = 0
         qmax = 2**self.bits - 1
         if self.scheme == 'symmetric':
-            scale = max(abs(min_val), abs(max_val)) / (qmax / 2)
-            zero_point = 0
+            scale = np.maximum(np.abs(min_val), np.abs(max_val)) / (qmax / 2)
+            zero_point = np.zeros_like(scale)
         else:  # asymmetric
             scale = (max_val - min_val) / (qmax - qmin)
             zero_point = qmin - min_val / scale

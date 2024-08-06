@@ -15,11 +15,11 @@
 - **Weight Sharing:** Share weights across different layers to reduce the model size.
 - **Knowledge Distillation:** Use a smaller "student" model trained to mimic a larger "teacher" model.
 - **Dynamic Quantization:** Apply quantization dynamically during inference to adapt to different input data distributions.
+- **Distributed Computing:** Utilize multiple devices to accelerate model training and inference.
 
 ## Installation
 
-To install Solv AI, use pip:
-```bash
+To install Solv AI, use pip:```bash
 pip install solv-ai
 ```
 

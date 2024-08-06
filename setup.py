@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="solv_ai",
-    version="0.1.1",
+    version="0.1.2",
     author="CloudSolv AI",
     author_email="eric@cloudsolv.co",
     description="A high-performance AI model optimization library",
