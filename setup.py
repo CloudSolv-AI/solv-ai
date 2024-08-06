@@ -11,7 +11,7 @@ setup(
     description="A high-performance AI model optimization library",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/CloudSolv-AI/solv_ai",
+    url="https://github.com/CloudSolv-AI/solv-ai",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
