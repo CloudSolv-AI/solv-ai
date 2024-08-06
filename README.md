@@ -19,7 +19,8 @@
 
 ## Installation
 
-To install Solv AI, use pip:```bash
+To install Solv AI, use pip:
+```bash
 pip install solv-ai
 ```
 
