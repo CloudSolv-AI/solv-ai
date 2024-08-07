@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.distributed as dist
-from torch.distributed.pipeline.sync import Pipe
 
 class ModelParallelLayer(nn.Module):
     def __init__(self, layer, device_ids):
@@ -31,18 +30,22 @@ class DataParallelLayer(nn.Module):
             raise TypeError("Input must be a torch.Tensor")
         return self.layer(x)
 
-class PipelineParallelLayer(nn.Module):
-    def __init__(self, layers, chunks=2):
+class CustomPipelineParallelLayer(nn.Module):
+    def __init__(self, layers, devices):
         if not isinstance(layers, list):
             raise TypeError("Layers must be a list")
         if not all(isinstance(layer, torch.nn.Module) for layer in layers):
             raise TypeError("All elements in layers must be torch.nn.Module")
-        if not isinstance(chunks, int) or chunks <= 0:
-            raise ValueError("Chunks must be a positive integer")
-        super(PipelineParallelLayer, self).__init__()
-        self.pipeline = Pipe(nn.Sequential(*layers), chunks=chunks)
+        if not isinstance(devices, list):
+            raise TypeError("Devices must be a list")
+        if not all(isinstance(device, torch.device) for device in devices):
+            raise TypeError("All elements in devices must be torch.device")
+        super(CustomPipelineParallelLayer, self).__init__()
+        self.layers = nn.ModuleList(layers)
+        self.devices = devices
 
     def forward(self, x):
-        if not isinstance(x, torch.Tensor):
-            raise TypeError("Input must be a torch.Tensor")
-        return self.pipeline(x)
+        for i, layer in enumerate(self.layers):
+            x = x.to(self.devices[i])
+            x = layer(x)
+        return x
